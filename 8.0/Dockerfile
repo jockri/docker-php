@@ -51,6 +51,8 @@ RUN docker-php-ext-install \
 RUN pecl channel-update pecl.php.net \
   && pecl install xdebug
 
+RUN cp /usr/local/etc/php/php.ini-development /usr/local/etc/php/php.ini
+
 COPY conf/extra.conf /usr/local/etc/php-fpm.d/zzz-extra.conf
 COPY conf/opcache.ini /usr/local/etc/php/conf.d/docker-php-ext-opcache.ini
 COPY conf/xdebug.ini /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
