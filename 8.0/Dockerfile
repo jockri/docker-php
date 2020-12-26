@@ -15,6 +15,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
   libzip-dev \
   libc-client-dev \
   libkrb5-dev \
+  unzip \
   procps \
   zip \
   git \
