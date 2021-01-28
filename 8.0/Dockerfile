@@ -1,5 +1,8 @@
 FROM php:8.0-fpm
 
+ARG USER_ID
+ARG GROUP_ID
+
 RUN apt-get update && apt-get install -y --no-install-recommends \
   apt-utils \
   libbz2-dev \
@@ -64,14 +67,14 @@ RUN docker-php-ext-enable xdebug \
 
 RUN curl -sS https://getcomposer.org/installer | \
   php -- --1 --install-dir=/usr/local/bin --filename=composer
-ENV COMPOSER_ALLOW_SUPERUSER 1
 
 RUN apt-get -y -q autoremove && \
     apt-get -y -q clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/*
 
-EXPOSE 9000
+RUN usermod -o -u $USER_ID www-data && \
+    groupmod -o -g $GROUP_ID www-data
 
-CMD ["--allow-to-run-as-root"]
+EXPOSE 9000
 
 WORKDIR /app
