@@ -1,8 +1,5 @@
 FROM php:8.0-fpm
 
-ARG USER_ID
-ARG GROUP_ID
-
 RUN apt-get update && apt-get install -y --no-install-recommends \
   apt-utils \
   libbz2-dev \
@@ -62,8 +59,7 @@ COPY conf/opcache.ini /usr/local/etc/php/conf.d/docker-php-ext-opcache.ini
 COPY conf/xdebug.ini /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
 COPY conf/extra.ini /usr/local/etc/php/conf.d/zzz-extra.ini
 
-RUN docker-php-ext-enable xdebug \
-  && sed -i -e 's/^zend_extension/\;zend_extension/g' /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+RUN docker-php-ext-enable xdebug
 
 RUN curl -sS https://getcomposer.org/installer | \
   php -- --1 --install-dir=/usr/local/bin --filename=composer
@@ -72,9 +68,12 @@ RUN apt-get -y -q autoremove && \
     apt-get -y -q clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/*
 
-RUN usermod -o -u $USER_ID www-data && \
-    groupmod -o -g $GROUP_ID www-data
+RUN mkdir /scripts
+COPY conf/run.sh /scripts/run.sh
+RUN chmod -R 755 /scripts
 
 EXPOSE 9000
 
 WORKDIR /app
+
+CMD ["/scripts/run.sh", "php-fpm"]
