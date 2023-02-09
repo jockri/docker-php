@@ -15,6 +15,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
   libzip-dev \
   libc-client-dev \
   libkrb5-dev \
+  librabbitmq-dev \
   unzip \
   procps \
   zip \
@@ -50,7 +51,9 @@ RUN docker-php-ext-install \
   zip
 
 RUN pecl channel-update pecl.php.net \
-  && pecl install xdebug
+  && pecl install xdebug \
+  && pecl install amqp \
+  && pecl install grpc
 
 RUN cp /usr/local/etc/php/php.ini-development /usr/local/etc/php/php.ini
 
@@ -60,6 +63,8 @@ COPY conf/xdebug.ini /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
 COPY conf/extra.ini /usr/local/etc/php/conf.d/zzz-extra.ini
 
 RUN docker-php-ext-enable xdebug
+RUN docker-php-ext-enable amqp
+RUN docker-php-ext-enable grpc
 
 RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" && \
   php composer-setup.php --install-dir=/usr/local/bin --filename=composer && \
