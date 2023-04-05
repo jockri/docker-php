@@ -9,6 +9,7 @@ RUN apk add --no-cache \
     grep \
     less \
     procps \
+    shadow \
     supervisor \
     vim \
     wget
